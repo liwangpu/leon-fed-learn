@@ -1,4 +1,4 @@
-const { src, dest, parallel } = require("gulp");
+const { src, dest, parallel, watch } = require("gulp");
 const ts = require("gulp-typescript");
 const sass = require("gulp-sass");
 
@@ -20,4 +20,11 @@ function compileSassTask(cb) {
     cb();
 }//compileSassTask
 
-module.exports.default = parallel(copyAsstsTask, compileTsTask, compileSassTask);
+function watchAndReCompileTask(cb) {
+    watch('src/**/*.ts', { ignoreInitial: true }, compileTsTask);
+    watch('src/**/*.scss', { ignoreInitial: true }, compileSassTask);
+    cb();
+}
+
+exports.watch = watchAndReCompileTask;
+exports.default = parallel(copyAsstsTask, compileTsTask, compileSassTask);
