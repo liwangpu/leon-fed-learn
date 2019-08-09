@@ -11,6 +11,7 @@ function copyHtmlTask(cb) {
 
 function copyAsstsTask(cb) {
     src("src/favicon.ico").pipe(dest("dist"));
+    src("src/assets/**/*").pipe(dest("dist/assets"));
     cb();
 }//copyAsstsTask
 
