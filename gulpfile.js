@@ -1,8 +1,9 @@
 const { src, dest, parallel, watch } = require("gulp");
-const ts = require("gulp-typescript");
 const sass = require("gulp-sass");
+const browserify = require('browserify');
+const tsify = require('tsify');
+const source = require('vinyl-source-stream');
 
-let tsProject = ts.createProject('tsconfig.json');
 
 function copyHtmlTask(cb) {
     src("src/**/*.html").pipe(dest("dist"));
@@ -16,7 +17,17 @@ function copyAsstsTask(cb) {
 }//copyAsstsTask
 
 function compileTsTask(cb) {
-    src("src/**/*.ts").pipe(tsProject()).js.pipe(dest("dist"));
+    browserify({
+        basedir: '.',
+        debug: true,
+        entries: ['src/index.ts'],
+        cache: {},
+        packageCache: {}
+    })
+        .plugin(tsify)
+        .bundle()
+        .pipe(source('index.js'))
+        .pipe(dest("dist"));
     cb();
 }//compileTsTask
 
