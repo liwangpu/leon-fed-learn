@@ -3,10 +3,10 @@ const sass = require("gulp-sass");
 const browserify = require('browserify');
 const tsify = require('tsify');
 const source = require('vinyl-source-stream');
-
+const htmlmin = require('gulp-htmlmin');
 
 function copyHtmlTask(cb) {
-    src("src/**/*.html").pipe(dest("dist"));
+    src("src/**/*.html").pipe(htmlmin({ collapseWhitespace: true })).pipe(dest("dist"));
     cb();
 }//copyHtmlTask
 
