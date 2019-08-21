@@ -1,22 +1,43 @@
-const { src, dest, parallel, watch } = require("gulp");
+const { src, dest, parallel, series, watch } = require("gulp");
 const sass = require("gulp-sass");
-const browserify = require('browserify');
-const tsify = require('tsify');
-const source = require('vinyl-source-stream');
-const htmlmin = require('gulp-htmlmin');
+const browserify = require("browserify");
+const tsify = require("tsify");
+const source = require("vinyl-source-stream");
+const htmlmin = require("gulp-htmlmin");
+const del = require("del");
+const server = require('browser-sync').create();
 
-function copyHtmlTask(cb) {
+function cleanDist(cb) {
+    del.sync(["dist/**"]);
+    cb();
+}//cleanDist
+
+function startServer(cb) {
+    server.init({
+        server: {
+            baseDir: "./dist"
+        }
+    });
+    cb();
+}//startServer
+
+function reloadServer(cb) {
+    server.reload();
+    cb();
+}//reloadServer
+
+function copyHtml(cb) {
     src("src/**/*.html").pipe(htmlmin({ collapseWhitespace: true })).pipe(dest("dist"));
     cb();
-}//copyHtmlTask
+}//copyHtml
 
-function copyAsstsTask(cb) {
+function copyAssts(cb) {
     src("src/favicon.ico").pipe(dest("dist"));
     src("src/assets/**/*").pipe(dest("dist/assets"));
     cb();
-}//copyAsstsTask
+}//copyAssts
 
-function compileTsTask(cb) {
+function compileTs(cb) {
     browserify({
         basedir: '.',
         debug: true,
@@ -29,19 +50,19 @@ function compileTsTask(cb) {
         .pipe(source('index.js'))
         .pipe(dest("dist"));
     cb();
-}//compileTsTask
+}//compileTs
 
-function compileSassTask(cb) {
+function compileSass(cb) {
     src("src/**/*.scss").pipe(sass()).pipe(dest("dist"));
     cb();
-}//compileSassTask
+}//compileSass
 
-function watchAndReCompileTask(cb) {
-    watch('src/**/*.ts', { ignoreInitial: true }, compileTsTask);
-    watch('src/**/*.scss', { ignoreInitial: true }, compileSassTask);
-    watch('src/**/*.html', { ignoreInitial: true }, copyHtmlTask);
+function watchAndReCompile(cb) {
+    watch('src/**/*.ts', { ignoreInitial: true }, series(compileTs, reloadServer));
+    watch('src/**/*.scss', { ignoreInitial: true }, series(compileSass, reloadServer));
+    watch('src/**/*.html', { ignoreInitial: true }, series(copyHtml, reloadServer));
     cb();
-}//watchAndReCompileTask
+}//watchAndReCompile
 
-exports.watch = watchAndReCompileTask;
-exports.default = parallel(copyHtmlTask, copyAsstsTask, compileTsTask, compileSassTask);
+exports.default = series(cleanDist, parallel(copyHtml, copyAssts, compileTs, compileSass), startServer, watchAndReCompile);
+

@@ -4,9 +4,8 @@
   "description": "for learning",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "npm run build",
-    "build": "gulp && gulp watch"
+    "build": "gulp"
   },
   "repository": {
     "type": "git",
@@ -20,7 +19,9 @@
   },
   "homepage": "https://github.com/liwangpu/leon-fed-learn#readme",
   "devDependencies": {
+    "browser-sync": "^2.26.7",
     "browserify": "^16.5.0",
+    "del": "^5.0.0",
     "gulp": "^4.0.2",
     "gulp-htmlmin": "^5.0.1",
     "gulp-sass": "^4.0.2",
