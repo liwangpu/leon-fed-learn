@@ -27,8 +27,7 @@ function reloadServer(cb) {
 }//reloadServer
 
 function copyHtml(cb) {
-    src("src/**/*.html").pipe(htmlmin({ collapseWhitespace: true })).pipe(dest("dist"));
-    cb();
+    src("src/**/*.html").pipe(htmlmin({ collapseWhitespace: true })).pipe(dest("dist")).on('end', cb);
 }//copyHtml
 
 function copyAssts(cb) {
@@ -46,15 +45,17 @@ function compileTs(cb) {
         packageCache: {}
     })
         .plugin(tsify)
+        .on('error', cb)
         .bundle()
         .pipe(source('index.js'))
-        .pipe(dest("dist"));
-    cb();
+        .pipe(dest("dist"))
+        .on('end', cb);
 }//compileTs
 
 function compileSass(cb) {
-    src("src/**/*.scss").pipe(sass()).pipe(dest("dist"));
-    cb();
+    src("src/**/*.scss").pipe(sass())
+        .on('error', cb)
+        .pipe(dest("dist")).on('end', cb);
 }//compileSass
 
 function watchAndReCompile(cb) {
