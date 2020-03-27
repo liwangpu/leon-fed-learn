@@ -8,14 +8,14 @@ const del = require("del");
 const server = require('browser-sync').create();
 
 function cleanDist(cb) {
-    del.sync(["dist/**"]);
+    del.sync(["images/dist/**"]);
     cb();
 }//cleanDist
 
 function startServer(cb) {
     server.init({
         server: {
-            baseDir: "./dist"
+            baseDir: "./image/dist"
         }
     });
     cb();
@@ -27,12 +27,12 @@ function reloadServer(cb) {
 }//reloadServer
 
 function copyHtml(cb) {
-    src("src/**/*.html").pipe(htmlmin({ collapseWhitespace: true })).pipe(dest("dist")).on('end', cb);
+    src("src/**/*.html").pipe(htmlmin({ collapseWhitespace: true })).pipe(dest("image/dist")).on('end', cb);
 }//copyHtml
 
 function copyAssts(cb) {
-    src("src/favicon.ico").pipe(dest("dist"));
-    src("src/assets/**/*").pipe(dest("dist/assets"));
+    src("src/favicon.ico").pipe(dest("image/dist"));
+    src("src/assets/**/*").pipe(dest("image/dist/assets"));
     cb();
 }//copyAssts
 
@@ -48,14 +48,14 @@ function compileTs(cb) {
         .on('error', cb)
         .bundle()
         .pipe(source('index.js'))
-        .pipe(dest("dist"))
+        .pipe(dest("image/dist"))
         .on('end', cb);
 }//compileTs
 
 function compileSass(cb) {
     src("src/**/*.scss").pipe(sass())
         .on('error', cb)
-        .pipe(dest("dist")).on('end', cb);
+        .pipe(dest("image/dist")).on('end', cb);
 }//compileSass
 
 function watchAndReCompile(cb) {
