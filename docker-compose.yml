@@ -5,6 +5,6 @@ services:
   fedsite:
     container_name: fedsite-c
     build: ./image
-    image: registry.cn-qingdao.aliyuncs.com/leon-pu/fed-tutorial-app:latest
+    image: registry.cn-beijing.aliyuncs.com/leon-pu/longshanpanorama:latest
     ports:
       - "9891:80"

@@ -2,23 +2,84 @@
 <html lang="en">
 
 <head>
-    <title>FED Learning</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="./index.css">
-    <script>
-        window.onload = function () {
+    <script src="./assets/scripts/three.min.js"></script>
+    <script src="./assets/scripts/panolens.min.js"></script>
+    <style>
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+        }
 
-        }//onload
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        #upload-btn {
+            position: fixed;
+            top: 5px;
+            left: 5px;
+        }
+
+        #upload-btn:hover {
+            cursor: pointer;
+        }
+
+        #image-file {
+            display: none;
+        }
+    </style>
+    <script>
+        let viewer = null;
+        window.onload = function () {
+            const panorama = new PANOLENS.ImagePanorama('./assets/images/default.jpg');
+            viewer = new PANOLENS.Viewer({ controlBar: false });
+            viewer.add(panorama);
+
+            // image图片被点击后,触发onSelectImage
+            let imageNode = document.getElementById('upload-btn');
+            imageNode.addEventListener('click', onSelectImage);
+            // 等待input file上传文件后,就更新全景图的照片
+            let fileInput = document.getElementById('image-file');
+            fileInput.addEventListener('change', onFileChange);
+        }
+
+        function onSelectImage() {
+            let fileInput = document.getElementById('image-file');
+            // 手动触发input组件的点击事件
+            fileInput.click();
+        }
+
+        function onFileChange() {
+            // 通过FileReader去读取图片文件,获取图片的base64字符串
+            // 图片其实都可以转为base64字符串
+            let reader = new FileReader();
+            let fileInput = document.getElementById('image-file').files[0];
+            // 等待文件读取结束后
+            reader.onloadend = function () {
+                const panorama = new PANOLENS.ImagePanorama(reader.result);
+                viewer.add(panorama);
+                viewer.setPanorama(panorama);
+            }
+
+            if (fileInput) {
+                reader.readAsDataURL(fileInput);
+            }
+        }
     </script>
+
+    <title>全景图片预览小工具</title>
 </head>
 
 <body>
-
+    <img src="./assets/images/upload.svg" id="upload-btn">
+    <!-- 为input设置过滤,只能选择图片 -->
+    <input type="file" id="image-file" accept="image/*">
 </body>
-
-<script src="./index.js"></script>
 
 </html>
