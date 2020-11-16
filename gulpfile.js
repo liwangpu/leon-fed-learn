@@ -1,8 +1,11 @@
 const { src, dest, parallel, series, watch } = require("gulp");
-const sass = require("gulp-sass");
+const sass = require("gulp-dart-sass");
 const browserify = require("browserify");
 const tsify = require("tsify");
 const source = require("vinyl-source-stream");
+const sourcemaps = require("gulp-sourcemaps");
+let uglify = require('gulp-uglify-es').default;
+var buffer = require('vinyl-buffer');
 const htmlmin = require("gulp-htmlmin");
 const del = require("del");
 const server = require('browser-sync').create();
@@ -39,15 +42,25 @@ function copyAssts(cb) {
 function compileTs(cb) {
     browserify({
         basedir: '.',
-        debug: true,
+        debug: false,
         entries: ['src/index.ts'],
         cache: {},
         packageCache: {}
     })
         .plugin(tsify)
+        .transform("babelify", {
+            presets: ["es2015"],
+            extensions: [".ts"],
+        })
         .on('error', cb)
         .bundle()
         .pipe(source('index.js'))
+        .pipe(buffer())
+        .pipe(sourcemaps.init({
+            loadMaps: true
+        }))
+        .pipe(uglify())
+        .pipe(sourcemaps.write("./"))
         .pipe(dest("image/dist"))
         .on('end', cb);
 }//compileTs
