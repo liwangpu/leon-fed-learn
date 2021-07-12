@@ -2,9 +2,9 @@ version: '3.4'
 
 services:
 
-  fedsite:
-    container_name: fedsite-c
+    panoramo-tool:
+    container_name: panoramo-tool-c
     build: ./image
-    image: registry.cn-qingdao.aliyuncs.com/leon-pu/fed-tutorial-app:latest
+    image: registry.cn-shanghai.aliyuncs.com/leon-pu/longshan_panorama_tool:latest
     ports:
-      - "9891:80"
+      - "9895:80"
