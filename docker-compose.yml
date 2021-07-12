@@ -2,9 +2,9 @@ version: '3.4'
 
 services:
 
-    panoramo-tool:
+  panoramo-tool:
     container_name: panoramo-tool-c
     build: ./image
     image: registry.cn-shanghai.aliyuncs.com/leon-pu/longshan_panorama_tool:latest
     ports:
-      - "9895:80"
+      - "9892:80"
